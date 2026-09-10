@@ -51,23 +51,36 @@ int main()
 /* 
 
 Heapify
-	Construir Heap - Árvore Binária
-	Pai maior que os filhos
-	Os filhos ficam em v[2*i+1] e v[2*i+2]
-	Recursivamente, vai selecionando os maiores elementos
-	para ficarem como pais no topo da árvore.
-	if max changes, it has found a new great element to become a parent
-	in the binary tree
+	Maintains the max-heap property for a given node 'i' in a binary tree.
+	The index positions of the vector follows line by line on the binary tree,
+	so the left and right children of a parent node are different 
+	than i+1 or i+2 (other parents).
+	Left and Right are the childre v[2*i+1] and v[2*i+2]. 
+	The max-heap property dictates that a parent node must be greater than 
+	or equal to its children (located at v[2*i+1] and v[2*i+2] for 0-based indexing).
+	It compares the parent with its children and, if a child is greater, 
+	it swaps them. It then recursively calls itself to ensure the swapped 
+	child node also maintains the max-heap property downwards.
+	The 'heap_size' parameter is crucial here because during the sorting phase, 
+	the "logical" size of the heap shrinks, preventing the algorithm from 
+	modifying elements that are already sorted at the end of the vector.
 
 Buildheap
-	Builds the heap binary tree (v[i]>v[2i+1] v[i]>v[2i+2]) out of a vector
-	Builds only for half of the tree with parent nodes,
-	the other half are leaves and they dont have 2i+1 and 2i+2 positions
-	to satisfact the property of a heap.
-	
+	Constructs a heap binary tree out of an unsorted vector.
+	It iterates from the middle of the array down to the root v[0].
+	Only need to process the first half of the tree (parent nodes) because 
+	the elements in the second half are leaf nodes. By definition, leaf nodes 
+	have no children / no v[2i+1] or v[2i+2] and satisfy the heap property 
+	on their own.
+
 Heapsort
-	O maior elemento no topo vira o último
-	The size is decremented to isolate the last great element
-	Call heapify again to find the other greates element
-	Goes from v.size()-1 down to 1, leaving v[0] out 
+	1. Calls Buildheap to create the initial heap.
+	2. The largest element is now at the root (v[0]). We swap it with the last 
+	   element in the current logical heap.
+	3. We decrement 'heap_size' to isolate this largest element at the end 
+	   of the vector, effectively removing it from the heap so it remains sorted.
+	4. Since the new root might violate the max-heap property, we call 
+	   Heapify on index 0 to fix the tree and find the next largest element.
+	5. This process repeats from v.size() - 1 down to 1. The loop naturally ends, 
+	   leaving v[0] as the smallest element in its correct sorted position.
 */
