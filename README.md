@@ -2,8 +2,9 @@
 Data Structures and Algorithms
 
 ### Sorting Algotihms
-- Selection Sort
-- Insertion Sort
+- Selection
+- Insertion
+- Heap
 
 ### Bibliography
 Introduction to Algorithms by Thomas H Cormen
