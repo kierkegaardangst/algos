@@ -5,6 +5,7 @@ Data Structures and Algorithms
 - Selection
 - Insertion
 - Heap
+- Quick
 
 ### Bibliography
 Introduction to Algorithms by Thomas H Cormen
