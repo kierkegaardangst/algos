@@ -8,99 +8,95 @@ using namespace std;
 
 // Linked List 
 template <typename Key>
-struct Node
-{
-	Key key; // data / key inside the node (int = 1, string="Soren")
-	Node *next;
-	Node *prev;
-	
-	Node(Key k) : key(k), next(nullptr), prev(nullptr) {}
-};
-
-template <typename Key>
 struct List
 {
-	Node<Key> *head; // First node element with node->prev and node->next
+	struct Node
+	{
+		Key key; // data / key inside the node (int = 1, string="Soren")
+		Node *next;
+		Node *prev;
+		
+		Node(Key k) : key(k), next(nullptr), prev(nullptr) {}
+	};
+
+	Node *head; // First node element with node->prev and node->next
 
 	List() : head(nullptr) {}
+
+	// Insert: Starts the Linked List
+	void list_insert(Node* x)
+	{
+		x->next = head;
+		if (head != nullptr)
+		{
+			head->prev = x;
+		}
+		head = x;
+		x->prev = nullptr;
+	}
+
+	// Search
+	Node* list_search(Key k) 
+	{
+		Node *x = head;
+		while (x != nullptr && x->key != k)
+		{
+			x = x->next;
+		}
+		return x;
+	}
+
+	// Delete
+	void list_delete(Node* x)
+	{
+		if (x->prev != nullptr)
+		{
+			x->prev->next = x->next;
+		} 
+		else
+		{
+			head = x->next;
+		}
+		
+		if (x->next != nullptr)
+		{
+			x->next->prev = x->prev;
+		}
+	}
+
+	// Size
+	int list_size()
+	{
+		int count = 0;
+		Node* x = head;
+		
+		while (x != nullptr)
+		{
+			count++;
+			x = x->next;
+		}
+		return count;
+	}
 };
 // --------------------------------------------
-
-// Insert: Starts the Linked List
-template <typename Key>
-void list_insert(List<Key>& L, Node<Key>* x)
-{
-	x->next = L.head;
-	if (L.head != nullptr)
-	{
-		L.head->prev = x;
-	}
-	L.head = x;
-	x->prev = nullptr;
-}
-
-// Search
-template <typename Key>
-Node<Key>* list_search(List<Key>& L, Key k) 
-{
-	Node<Key> *x = L.head;
-	while (x != nullptr && x->key != k)
-	{
-		x = x->next;
-	}
-	return x;
-}
-
-// Delete
-template<typename Key>
-void list_delete(List<Key>& L, Node<Key>* x)
-{
-	if (x->prev != nullptr)
-	{
-		x->prev->next = x->next;
-	} 
-	else
-	{
-		L.head = x->next;
-	}
-	
-	if (x->next != nullptr)
-	{
-		x->next->prev = x->prev;
-	}
-}
-
-// Size
-template <typename Key>
-int list_size(List<Key>& L)
-{
-    int count = 0;
-    Node<Key>* x = L.head;
-    
-    while (x != nullptr)
-    {
-        count++;
-        x = x->next;
-    }
-    return count;
-}
 
 int main()
 {
 	List<int> l;
 
-	Node<int>* n1 = new Node<int>(65);
-	Node<int>* n2 = new Node<int>(32);
-	Node<int>* n3 = new Node<int>(70);
+	// Because Node is inside List, we declare it as List<int>::Node
+	List<int>::Node* n1 = new List<int>::Node(65);
+	List<int>::Node* n2 = new List<int>::Node(32);
+	List<int>::Node* n3 = new List<int>::Node(70);
 
-	list_insert(l, n1);
-	list_insert(l, n2);
-	list_insert(l, n3);
+	l.list_insert(n1);
+	l.list_insert(n2);
+	l.list_insert(n3);
 
-    cout << "List 1 size: " << list_size(l) << endl;
+    cout << "List 1 size: " << l.list_size() << endl;
 
     cout << "List 1: ";
-    Node<int>* x = l.head;
+    List<int>::Node* x = l.head;
     while (x != nullptr) 
     {
         cout << x->key << " ";
@@ -108,11 +104,11 @@ int main()
     }
     cout << endl;
     
-    Node<int>* node_delete = list_search(l, 32);
+    List<int>::Node* node_delete = l.list_search(32);
     if (node_delete != nullptr)
     {
 		cout << "Deleted element with data-key: " << node_delete->key << endl;
-        list_delete(l, node_delete);
+        l.list_delete(node_delete);
         delete node_delete;
     } else{
 		cout << "Node not found inside the linked list." << endl;
@@ -131,20 +127,20 @@ int main()
 
 	List<string> l2;
 
-	Node<string>* n4 = new Node<string>("Soren");
-	Node<string>* n5 = new Node<string>("Huxley");
-	Node<string>* n6 = new Node<string>("Lovecraft");
-	Node<string>* n7 = new Node<string>("Yeats");
+	List<string>::Node* n4 = new List<string>::Node("Soren Kierkegaard");
+	List<string>::Node* n5 = new List<string>::Node("Aldous Huxley");
+	List<string>::Node* n6 = new List<string>::Node("Tolstoy");
+	List<string>::Node* n7 = new List<string>::Node("Dostoyevsky");
 
-	list_insert(l2, n4);
-	list_insert(l2, n5);
-	list_insert(l2, n6);
-	list_insert(l2, n7);
+	l2.list_insert(n4);
+	l2.list_insert(n5);
+	l2.list_insert(n6);
+	l2.list_insert(n7);
 
-	cout << "List 2 size: " << list_size(l2) << endl;
+	cout << "List 2 size: " << l2.list_size() << endl;
 
     cout << "List 2: ";
-    Node<string>* x_2 = l2.head;
+    List<string>::Node* x_2 = l2.head;
     while (x_2 != nullptr) 
     {
         cout <<  x_2->key << " | ";
@@ -185,7 +181,7 @@ int main()
 	  - Holds the actual value (e.g., int = 1, string = "Soren").
 	  - Example: Node<string>* x = new Node<string>("Soren");
 	  - To return the data inside the node, dereference the pointer using 
-	    either (*x).key or the standard arrow shorthand: x->key.
+	    either (*x).key or x->key.
 
 	* Pointers:
 	  - x->next: Stores the memory address of the next Node in the sequence.
