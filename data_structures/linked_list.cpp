@@ -7,21 +7,23 @@
 using namespace std;
 
 // Linked List 
-template <typename Key>
+template <typename Data>
 struct List
 {
 	struct Node
 	{
-		Key key; // data / key inside the node (int = 1, string="Soren")
+		Data key; // data / key inside the node (int = 1, string="Soren")
 		Node *next;
 		Node *prev;
 		
-		Node(Key k) : key(k), next(nullptr), prev(nullptr) {}
+		Node(Data k) : key(k), next(nullptr), prev(nullptr) {}
 	};
 
-	Node *head; // First node element with node->prev and node->next
-
-	List() : head(nullptr) {}
+	// First node element
+	// (*head).key: data
+	// head->next, head->prev: pointers
+	Node *head; 
+	List() : head(nullptr) {} 
 
 	// Insert: Starts the Linked List
 	void list_insert(Node* x)
@@ -36,7 +38,7 @@ struct List
 	}
 
 	// Search
-	Node* list_search(Key k) 
+	Node* list_search(Data k) 
 	{
 		Node *x = head;
 		while (x != nullptr && x->key != k)
@@ -84,7 +86,6 @@ int main()
 {
 	List<int> l;
 
-	// Because Node is inside List, we declare it as List<int>::Node
 	List<int>::Node* n1 = new List<int>::Node(65);
 	List<int>::Node* n2 = new List<int>::Node(32);
 	List<int>::Node* n3 = new List<int>::Node(70);
@@ -129,7 +130,7 @@ int main()
 
 	List<string>::Node* n4 = new List<string>::Node("Soren Kierkegaard");
 	List<string>::Node* n5 = new List<string>::Node("Aldous Huxley");
-	List<string>::Node* n6 = new List<string>::Node("Tolstoy");
+	List<string>::Node* n6 = new List<string>::Node("Leo Tolstoy");
 	List<string>::Node* n7 = new List<string>::Node("Dostoyevsky");
 
 	l2.list_insert(n4);
@@ -143,7 +144,7 @@ int main()
     List<string>::Node* x_2 = l2.head;
     while (x_2 != nullptr) 
     {
-        cout <<  x_2->key << " | ";
+        cout <<  x_2->key << " ";
         x_2 = x_2->next;
     }
     cout << endl;
