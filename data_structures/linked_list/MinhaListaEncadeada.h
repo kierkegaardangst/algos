@@ -1,8 +1,6 @@
 #ifndef DEC0006_MINHA_LISTA_ENCADEADA_H
 #define DEC0006_MINHA_LISTA_ENCADEADA_H
 
-// 1 shot de vinho para cada failed nessa droga
-
 #include <cstddef>
 // std::size_t
 
@@ -32,6 +30,7 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
         {
             Elemento<T>* next = h->proximo;
             delete h;
+            this->_tamanho--;
             h = next;
         }
         this->_primeiro = nullptr; // head = nullptr
@@ -45,14 +44,7 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
      */
     virtual std::size_t tamanho() const
     {
-        int count = 0;
-        Elemento<T>* x = this->_primeiro; // Node* x = head, primeiro elemento
-        while (x != nullptr)
-        {
-            count += 1;
-            x = x->proximo;
-        }
-        return count;
+        return this->_tamanho;
     };
     
     /**
@@ -62,10 +54,12 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
      */
     virtual bool vazia() const 
     {
-        Elemento<T>* x = this->_primeiro; 
-        if (x == nullptr){
+        if (this->_tamanho == 0)
+        {
             return true;
-        }else{
+        }
+        else 
+        {
             return false;
         }
         return 0;
@@ -83,24 +77,21 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
     virtual std::size_t posicao(T dado) const 
     {
         
-        // (*x).dado: dado do nó / elemento
-        Elemento<T>* x = this->_primeiro;
-        int count = 0;
-        if (x == nullptr) // Lista vazia
+        if (vazia())
         {
             throw ExcecaoListaEncadeadaVazia();
         }
-        while(x != nullptr && (*x).dado != dado) // Procura o dado
-        {
-            count += 1;
-            x = x->proximo;
-        }
-        if (x == nullptr) // Não achou depois do while
-        {
-            throw ExcecaoDadoInexistente();
+        
+        // Loop para procurar a posicao do nodo->dado == dado
+        Elemento<T>* head = this->_primeiro;
+        for (size_t i = 0; i < this->_tamanho && head != nullptr; i++){
+            if (head->dado == dado){
+                return i;
+            }
+            head = head->proximo;
         }
         
-        return count;
+        throw ExcecaoDadoInexistente();
     };
     
     /**
@@ -111,14 +102,12 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
      */
     virtual bool contem(T dado) const
     {
-        Elemento<T>* x = this->_primeiro;
-        while(x != nullptr && (*x).dado != dado) // Procura o dado
-        {
-            if (x->dado == dado)
-            {
+        Elemento<T>* head = this->_primeiro;
+        for (size_t i = 0; i < this->_tamanho && head != nullptr; i++){
+            if (head->dado == dado){
                 return true;
             }
-            x = x->proximo;
+            head = head->proximo;
         }
         
         return false;
@@ -152,27 +141,26 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
     virtual void inserir(std::size_t posicao, T dado)
     {
         
-        // posicao+1 ? há somente pointers
-        
-        // O(1)?
-        
+        // Checa out of boundary
         if (posicao < 0 || posicao > this->_tamanho) //v[0...n-1]
         {
             throw ExcecaoPosicaoInvalida();
         }
         
+        // Inserir no inicio (elemento = head) 
         if (posicao == 0)
         {
             inserirNoInicio(dado);
             return; 
         }
         
-        // z (posicao-1) -> y (posicao+1)        z->proximo = y
+        // Inserir no meio
         // z -> x -> y
+        // z [posicao-1] -> y [posicao+1] | z->proximo = y
         // x->proximo = z->proximo (y) && z->proximo = x
         
         Elemento<T>* z = this->_primeiro;
-        for (int i = 0; i < posicao - 1; i++) 
+        for (int i = 0; i < posicao - 1; i++) // stop: ?[pos-2]-> z[pos-1] = z 
         {
             z = z->proximo;
         }
@@ -222,7 +210,7 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
         
         Elemento<T>* h = this->_primeiro;
         
-        if (h == nullptr) // head = null  lista vazia
+        if (h == nullptr) // head = null  lista vazia ou this->_tamanho == 0
         {
             throw ExcecaoListaEncadeadaVazia();
         }
@@ -231,7 +219,7 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
         
         this->_primeiro = h->proximo; // h -> ? (head) -> ...
         
-        delete h; // ? (head) -> ...
+        delete h;                     // ? (head) -> ...
         
         this->_tamanho -= 1;
         
@@ -250,17 +238,36 @@ class MinhaListaEncadeada: public ListaEncadeadaAbstrata<T>
         if (posicao < 0 || posicao >= this->_tamanho){
             throw ExcecaoPosicaoInvalida();
         }
-        Elemento<T>* h = this->_primeiro;  
-        for (int i = 0; i < posicao; i++) // conseguir z nodo posicao-1
-        {
-            h = h->proximo;               // z -> x -> y
-        }
-        T x = (*h->proximo).dado;
-        h->proximo = h->proximo->proximo; // z -> y
-        delete h->proximo; // delete x
-        this->_tamanho -= 1;
         
-        return x;
+        if (vazia())
+        {
+            throw ExcecaoListaEncadeadaVazia();
+        }
+        
+        if (posicao == 0)
+        {
+            return this->removerDoInicio();
+        }
+        
+        Elemento<T>* x_prev = this->_primeiro;
+        for (size_t i = 0; i < posicao - 1; i++)
+        {
+            x_prev = x_prev->proximo;
+        }
+        Elemento<T>* x = x_prev->proximo;
+        if (x->proximo != nullptr){
+            x_prev->proximo = x->proximo;
+        }
+        else {
+            x_prev->proximo = nullptr;
+        }
+        
+        T dado = x->dado;
+        delete x;
+        this->_tamanho--;
+        
+        return dado;
+        
     };
 
     /**

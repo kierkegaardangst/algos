@@ -12,4 +12,7 @@ Data Structures and Algorithms
 - Linked List
 
 ### Bibliography
+
 Introduction to Algorithms by Thomas H Cormen
+
+[CP Algorithms](https://github.com/cp-algorithms/cp-algorithms)
